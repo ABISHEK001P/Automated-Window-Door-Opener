@@ -1,0 +1,32 @@
+BUZZ_PIN = 15
+ADC_PIN = 20
+THRESHOLD = 25
+SCALE_FACTOR = 0.0195
+OFFSET = 0.4
+
+# Initialize GPIO and ADC
+led = GPIO.new(BUZZ_PIN)
+adc = ADC.new(ADC_PIN)
+led.setmode(0)
+
+# Initialize flag
+window_open = false
+
+loop do
+  # Read and process ADC value
+  sensor_value = (adc.read - OFFSET) / SCALE_FACTOR
+  puts(sensor_value)
+
+  # Check if temperature exceeds threshold and window is not open
+  if sensor_value >= THRESHOLD && !window_open
+    led.write(1)
+    puts("Window  is open")
+    window_open = true
+  elsif sensor_value < THRESHOLD && window_open
+    led.write(0)
+    puts("Window is  close")
+    window_open = false
+  end
+
+  sleep(1)
+end
